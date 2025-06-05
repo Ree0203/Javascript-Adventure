@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Learn JavaScript Game</title>
+    <link rel="stylesheet" href="style.css"/>  
+
+
+</head>
+<body>
+    <div class="main" id="main">
+        <div class="game-board" id="board">
+            <div id="character">
+                <img src="Res/character.png" alt="">
+            </div>
+        </div>
+        <div class="text-area">
+            <div class="editor">
+                <div class="line-numbers" id="line-numbers">
+                    <ul id=numbers>
+                        <li>1</li>
+                    </ul>
+                </div>
+                <textarea name="" id="command"></textarea>
+
+            </div>
+            <button id="run" onclick="runCommand()">Run</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body> 
+</html>
+
