@@ -6,7 +6,7 @@ body {
 .game-board { 
     height: 954px;
     width: 1550px;
-    background-image: url(Res/15199.jpg);
+    background-image: url(Res/background.jpg);
     background-size: 1500px 1300px;
     background-position: 0 -160px;
     z-index: 1;
@@ -33,25 +33,22 @@ textarea {
     display: flex;
 }
 
-#character img { 
-    height: 150px;
-    width: 150px;
-}
-
 #character { 
     position: absolute;
-    top: 650px;
-    left: 430px;
+    top: 610px;
+    left: 410px;
     z-index: 10;
     transition: top 3s, left 3s;
+    height: 180px;
 }
 
 .checkpoint { 
     position: absolute;
     width: 80px;
-    height: 60px;
+    height: 80px;
     border-radius: 50%;
     z-index: 5;
+    scale: 0.8;
 }
 
 .text-area button { 
