@@ -5,12 +5,18 @@ const ctx = character.getContext('2d');
 const restartButton = document.getElementById("restart-button"); 
 const restartCtx = restartButton.getContext('2d');
 const buttonImage = new Image(); 
-buttonImage.src = "Res/Buttons.png"
-const BUTTON_WIDTH = restartButton.width = 30;
-const BUTTON_HEIGHT = restartButton.height = 30;
+buttonImage.src = "Res/restart.png"
+const BUTTON_WIDTH = restartButton.width = 144;
+const BUTTON_HEIGHT = restartButton.height = 72;
 const CANVAS_WIDTH = character.width = 150; 
 const CANVAS_HEIGHT = character.height = 150; 
 
+const resumeButton = document.getElementById("resume-button"); 
+const resumeCtx = resumeButton.getContext('2d'); 
+const resumeImage = new Image(); 
+const RESUME_WIDTH = resumeButton.width = 144; 
+const RESUME_HEIGHT = resumeButton.height = 72; 
+resumeImage.src = "Res/back.png"
 const playerImage = new Image(); 
 playerImage.src = "Res/Girl_1/Idle.png";
 
@@ -18,7 +24,7 @@ const container = document.getElementById("board");
 const playerPos = { x: 395 , y: 580 };
 let currentCheckpoint = "start"; 
 const textarea = document.getElementById("command");
-let number = 1; 
+let number = 2; 
 let previousLineCount = textarea.value.split("\n").length; 
 const spriteWidth = 128;
 const spriteHeight = 128; 
@@ -29,47 +35,110 @@ let frameNumber = 8;
 let waitTime = 3000; 
 let lastExecutedLineIndex = 0; 
 let restartBtnCords = 653.18; 
-let buttonCords = 5;
-const buttonSize = 130.63;
-let buttonFrame = 0; 
+const buttonWidth = 144;
+const buttonHeight = 72; 
 const menu = document.getElementById("pause-menu"); 
 const buttonClick = new Audio("Res/soundeffect.mp3"); 
-let lastExecutedContent = []; 
+let lastExecutedText = "";
+let buttonSpriteFrame = 0; 
+let buttonFrame = 0; 
+let isAnimating = false; 
+let resumeSprite = 0; 
+let resumeAnimating = false; 
 
 function renderButton (){ 
     restartCtx.clearRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT); 
-    restartCtx.drawImage(buttonImage, buttonCords*buttonSize, 0, 130.63, 130.63, 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
+    //drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh); 
+    restartCtx.drawImage(buttonImage, buttonSpriteFrame*144 , 0, buttonWidth, buttonHeight, 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
+    buttonFrame++; 
+    resumeCtx.clearRect(0, 0, RESUME_WIDTH, RESUME_HEIGHT); 
+    resumeCtx.drawImage(resumeImage, resumeSprite*144, 0, 144, 72, 0, 0, RESUME_WIDTH, RESUME_HEIGHT); 
     requestAnimationFrame(renderButton); 
+}
 
-    if(buttonFrame < 20) { 
-        buttonFrame++; 
-    } else { 
-        buttonCords = 5; 
-        buttonFrame = 0; 
+renderButton();
+
+function resumeLoop () { 
+    if(!resumeAnimating) { 
+        return; 
+    }
+    animateResume(); 
+    requestAnimationFrame(resumeLoop); 
+}
+function buttonLoop () { 
+
+    if(!isAnimating) { 
+        return; 
+    }
+    animateButton(); 
+    requestAnimationFrame(buttonLoop); 
+}
+
+function animateResume() { 
+    if (buttonFrame % 5 == 0) { 
+        if(resumeSprite < 4) { 
+            resumeSprite++; 
+        } else { 
+            resumeSprite = 0; 
+            return; 
+        }
     }
 }
 
-renderButton(); 
-
+function animateButton() { 
+    if (buttonFrame % 5 == 0) { 
+        if(buttonSpriteFrame < 4) { 
+            buttonSpriteFrame++; 
+        } else { 
+            buttonSpriteFrame = 0; 
+            return; 
+        }
+    }
+}
 function playSound () { 
     buttonClick.play(); 
 }
-restartButton.addEventListener("click", () => {
-    buttonFrame = 0; 
-    buttonCords = 6;
-    playSound(); 
 
-    lastExecutedContent = [];
+resumeButton.addEventListener("click", () => { 
+    if(!resumeAnimating) { 
+        resumeAnimating = true; 
+        resumeLoop(); 
+        setTimeout(() => {
+            resumeAnimating = false;
+        }, 416.75); 
+        resumeSprite = 0; 
+    }
+    playSound(); 
+}); 
+
+restartButton.addEventListener("click", () => {
+    if(!isAnimating) { 
+        isAnimating = true; 
+        buttonLoop(); 
+        setTimeout(() => {
+            isAnimating = false;
+        }, 416.75); 
+        buttonSpriteFrame = 0; 
+        playSound(); 
+    }
+
     lastExecutedLineIndex = 0;
     currentCheckpoint = "start";
+    lastExecutedText = "";
 
     character.style.transition = "none"; 
     playerImage.src = "Res/Girl_1/Idle.png";
     textarea.value = ""; 
+    const editor = document.getElementById("numbers");
+    editor.innerHTML = "";
+    number = 1;
+    previousLineCount = 1; 
+    updateLines();
     frameNumber = 8; 
     character.style.left = (checkpoints.start.x - 18) + "px";
     character.style.top = (checkpoints.start.y - 40) + "px";
-})
+});
+
 
 function animate() { 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); 
@@ -91,6 +160,7 @@ function animate() {
 
 animate(); 
 
+
 textarea.addEventListener("keydown", function(event) {
     if (event.key === "Enter" && !event.shiftKey) {
         updateLines(); 
@@ -107,27 +177,30 @@ textarea.addEventListener("input", () => {
         var linesToRemove = previousLineCount - currentLineCount; 
         removeNumber(linesToRemove); 
 
-        lastExecutedContent = []; 
     }
 
     previousLineCount = currentLineCount; 
 })
 function updateLines() { 
     const editor = document.getElementById("numbers"); 
-    number+=1; 
     const mark = document.createElement("li");
     mark.id = "number" + number; 
     mark.textContent = number;
     editor.appendChild(mark)
+
+
+    number++;
+
 }
 
 function removeNumber(howMuch) { 
 
     for(let i = 0; i<howMuch; i++) { 
+        number--;
+
         const element = document.getElementById("number" + number); 
         if(element) { 
             element.remove(); 
-            number--;
         }
 
         if(lastExecutedLineIndex != 0) { 
@@ -157,41 +230,52 @@ function placeCheckpoints() {
     }
 }
 
-async function runCommand() { 
-    const lines = textarea.value.split("\n");
-    let newLines = [];
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i] !== lastExecutedContent[i]) {
-            newLines = lines.slice(i);
-            lastExecutedContent = lastExecutedContent.slice(0, i); 
-            break;
+async function runCommand() {
+    const currentText = textarea.value.trim();
+    const lines = currentText.split("\n");
+    const previousLines = lastExecutedText.split("\n"); 
+    let newLines = lines.slice(lastExecutedLineIndex); 
+    let editedIndex = lineEdited(previousLines, lines); 
+    if(editedIndex != -1) { 
+        lastExecutedLineIndex = editedIndex; 
+        newLines = lines.slice(editedIndex); 
+    }
+
+    for (let i = 0; i < newLines.length; i++) {
+        const line = newLines[i].trim();
+        if (line === "") continue;
+
+        try {
+            lastExecutedLineIndex++;
+
+            await executeLine(line);
+
+            playerImage.onload = () => {
+                frameNumber = 8;
+            };
+            playerImage.src = "Res/Girl_1/Idle.png";
+
+        } catch (e) {
+            alert("Error on line " + (lastExecutedLineIndex + 1) + ": " + e.message);
+            return;
         }
     }
 
-    for(const line of newLines) { 
-        try {
-            if(line.trim() === "") { 
-                continue; 
-            } else { 
-                await executeLine(line);
-                playerImage.onload = () => {
-                    frameNumber = 8;
-                };
-                playerImage.src = "Res/Girl_1/Idle.png";
+    lastExecutedText = currentText;
+}
 
-                lastExecutedContent.push(line); 
-            }
 
-        } catch(e) { 
-            alert("Error: " + e.message); 
+
+function lineEdited (previous, after) { 
+    for(let i = 0; i<previous.length; i++) { 
+        if(previous[i] !== after[i]) { 
+            return i; 
             break; 
         }
-
     }
-
-    lastExecutedLineIndex = lines.length; 
-   
+    return -1; 
 }
+
 
 function executeLine(line) { 
     return new Promise((resolve, reject) => {
