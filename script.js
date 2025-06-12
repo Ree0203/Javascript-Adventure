@@ -1,6 +1,13 @@
 const character = document.getElementById("character"); 
 const ctx = character.getContext('2d'); 
 
+
+const restartButton = document.getElementById("restart-button"); 
+const restartCtx = restartButton.getContext('2d');
+const buttonImage = new Image(); 
+buttonImage.src = "Res/Buttons.png"
+const BUTTON_WIDTH = restartButton.width = 30;
+const BUTTON_HEIGHT = restartButton.height = 30;
 const CANVAS_WIDTH = character.width = 150; 
 const CANVAS_HEIGHT = character.height = 150; 
 
@@ -20,6 +27,49 @@ let gameFrame = 0;
 let staggerFrame = 5; 
 let frameNumber = 8; 
 let waitTime = 3000; 
+let lastExecutedLineIndex = 0; 
+let restartBtnCords = 653.18; 
+let buttonCords = 5;
+const buttonSize = 130.63;
+let buttonFrame = 0; 
+const menu = document.getElementById("pause-menu"); 
+const buttonClick = new Audio("Res/soundeffect.mp3"); 
+let lastExecutedContent = []; 
+
+function renderButton (){ 
+    restartCtx.clearRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT); 
+    restartCtx.drawImage(buttonImage, buttonCords*buttonSize, 0, 130.63, 130.63, 0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
+    requestAnimationFrame(renderButton); 
+
+    if(buttonFrame < 20) { 
+        buttonFrame++; 
+    } else { 
+        buttonCords = 5; 
+        buttonFrame = 0; 
+    }
+}
+
+renderButton(); 
+
+function playSound () { 
+    buttonClick.play(); 
+}
+restartButton.addEventListener("click", () => {
+    buttonFrame = 0; 
+    buttonCords = 6;
+    playSound(); 
+
+    lastExecutedContent = [];
+    lastExecutedLineIndex = 0;
+    currentCheckpoint = "start";
+
+    character.style.transition = "none"; 
+    playerImage.src = "Res/Girl_1/Idle.png";
+    textarea.value = ""; 
+    frameNumber = 8; 
+    character.style.left = (checkpoints.start.x - 18) + "px";
+    character.style.top = (checkpoints.start.y - 40) + "px";
+})
 
 function animate() { 
     ctx.clearRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT); 
@@ -56,6 +106,8 @@ textarea.addEventListener("input", () => {
     if (currentLineCount < previousLineCount) { 
         var linesToRemove = previousLineCount - currentLineCount; 
         removeNumber(linesToRemove); 
+
+        lastExecutedContent = []; 
     }
 
     previousLineCount = currentLineCount; 
@@ -76,6 +128,10 @@ function removeNumber(howMuch) {
         if(element) { 
             element.remove(); 
             number--;
+        }
+
+        if(lastExecutedLineIndex != 0) { 
+            lastExecutedLineIndex--; 
         }
     }
 }
@@ -102,11 +158,19 @@ function placeCheckpoints() {
 }
 
 async function runCommand() { 
-    const lines = (textarea.value.split("\n"));
+    const lines = textarea.value.split("\n");
+    let newLines = [];
+    for (let i = 0; i < lines.length; i++) {
+        if (lines[i] !== lastExecutedContent[i]) {
+            newLines = lines.slice(i);
+            lastExecutedContent = lastExecutedContent.slice(0, i); 
+            break;
+        }
+    }
 
-    for(line of lines) { 
+    for(const line of newLines) { 
         try {
-            if(line.value === " ") { 
+            if(line.trim() === "") { 
                 continue; 
             } else { 
                 await executeLine(line);
@@ -114,6 +178,8 @@ async function runCommand() {
                     frameNumber = 8;
                 };
                 playerImage.src = "Res/Girl_1/Idle.png";
+
+                lastExecutedContent.push(line); 
             }
 
         } catch(e) { 
@@ -122,6 +188,8 @@ async function runCommand() {
         }
 
     }
+
+    lastExecutedLineIndex = lines.length; 
    
 }
 
@@ -151,7 +219,13 @@ function move(place) {
     let distance = getDistance(checkpoints[currentCheckpoint].x, 
                 checkpoints[currentCheckpoint].y, 
                 checkpoints[nextCheckpoint].x, checkpoints[nextCheckpoint].y); 
-    character.style.transition = ("top " + distance + "0ms, left " + distance + "0ms"); 
+
+    
+    const timePerPixel = 10; 
+    const transitionTime = distance * timePerPixel; 
+
+    character.style.transition = `top ${transitionTime}ms, left ${transitionTime}ms`; 
+
     waitTime = distance + 3500; 
     character.style.left = (checkpoints[nextCheckpoint].x - 18) + "px"; 
     character.style.top = (checkpoints[nextCheckpoint].y - 40) + "px"; 

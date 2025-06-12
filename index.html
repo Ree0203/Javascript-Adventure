@@ -8,23 +8,30 @@
 
 </head>
 <body>
-    <div class="main" id="main">
-        <div class="game-board" id="board">
-            <canvas id="character"></canvas>
-        </div>
-        <div class="text-area">
-            <div class="editor">
-                <div class="line-numbers" id="line-numbers">
-                    <ul id=numbers>
-                        <li>1</li>
-                    </ul>
-                </div>
-                <textarea name="" id="command"></textarea>
 
+    <div class="main" id="main">
+        <div class="pause-menu" id="pause-menu">
+            <canvas id="restart-button"></canvas>
+        </div>
+        <div class = "game">
+            <div class="game-board" id="board">
+                <canvas id="character"></canvas>
             </div>
-            <button id="run" onclick="runCommand()">Run</button>
+            <div class="text-area">
+                <div class="editor">
+                    <div class="line-numbers" id="line-numbers">
+                        <ul id=numbers>
+                            <li>1</li>
+                        </ul>
+                    </div>
+                    <textarea name="" id="command"></textarea>
+
+                </div>
+                <button id="run" onclick="runCommand()">Run</button>
+            </div>
         </div>
     </div>
+    
 
     <script src="script.js"></script>
 </body> 

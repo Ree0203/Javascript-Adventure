@@ -93,3 +93,32 @@ textarea {
 .text-area { 
     background-color: #1f1f1f;
 }
+
+
+.game { 
+    display: flex;
+    height: 954px;
+    width: 100%;
+}
+
+
+.pause-menu { 
+    display: block;
+    position: absolute;
+    background-image: url(Res/menu-background1.png);
+    height: 505px;
+    width: 494px;
+    z-index: 1000;
+    background-repeat: no-repeat;;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+}
+
+#restart-button { 
+    position: absolute;
+    top: 350px;
+    left: 100px;
+    height: 60px;
+}
