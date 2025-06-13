@@ -10,17 +10,20 @@
 <body>
 
     <div class="main" id="main">
-        <div class="pause-menu" id="pause-menu">
-            <div class="pause-label">
-                <div>GAME</div>
-                <div>PAUSED</div>
+        <div class="pause-background"id = "pause-background">
+            <div class="pause-menu" id="pause-menu">
+                    <div class="pause-label">
+                        <div>GAME</div>
+                        <div>PAUSED</div>
+                    </div>
+                <canvas id="restart-button"></canvas>
+                <canvas id="resume-button"></canvas>
             </div>
-            <canvas id="restart-button"></canvas>
-            <canvas id="resume-button"></canvas>
-        </div>
+        </div>  
         <div class = "game">
             <div class="game-board" id="board">
                 <canvas id="character"></canvas>
+                <canvas id="pause-logo"></canvas>
             </div>
             <div class="text-area">
                 <div class="editor">

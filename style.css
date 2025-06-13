@@ -26,7 +26,7 @@ body {
 
 textarea { 
     width: 300px;
-    height: 864px;
+    height: 872px;
     resize: none;
     outline: none;
     border: none;
@@ -159,4 +159,21 @@ textarea {
     top: 200px; 
     left: 138px;
     height: 120px;
+}
+
+.pause-background { 
+    display: none;
+    background-color: rgba(0, 0, 0, 0.418);
+    width: 1910px;
+    height: 962px;
+    position: absolute;
+    left: -100;
+    top: 0;
+    z-index: 100;
+}
+
+#pause-logo { 
+    float: right;
+    height: 50px;
+    margin: 10px;
 }

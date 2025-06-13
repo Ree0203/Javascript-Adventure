@@ -20,6 +20,14 @@ resumeImage.src = "Res/back.png"
 const playerImage = new Image(); 
 playerImage.src = "Res/Girl_1/Idle.png";
 
+const pauseButton = document.getElementById("pause-logo"); 
+const pauseCtx = pauseButton.getContext('2d');
+const pauseImage = new Image(); 
+pauseImage.src = "Res/Buttons.png"; 
+const PAUSE_HEIGHT = pauseButton.height = 130.33; 
+const PAUSE_WIDTH = pauseButton.width = 130.63; 
+let pauseFrame = 7; 
+let pauseF = 0; 
 const container = document.getElementById("board"); 
 const playerPos = { x: 395 , y: 580 };
 let currentCheckpoint = "start"; 
@@ -45,6 +53,36 @@ let buttonFrame = 0;
 let isAnimating = false; 
 let resumeSprite = 0; 
 let resumeAnimating = false; 
+const pauseBg = document.getElementById("pause-background"); 
+
+function renderPauseButton () { 
+    pauseCtx.clearRect(0, 0, PAUSE_WIDTH, PAUSE_HEIGHT); 
+    pauseCtx.drawImage(pauseImage, pauseFrame*PAUSE_WIDTH, 0, PAUSE_WIDTH, PAUSE_HEIGHT, 0, 0, PAUSE_WIDTH, PAUSE_HEIGHT); 
+    requestAnimationFrame(renderPauseButton); 
+    pauseF++; 
+    if(pauseF === 50) { 
+        pauseFrame = 7; 
+    }
+}
+
+function animatePause () {
+    pauseF = 0; 
+    pauseFrame = 8;  
+    if (pauseF === 30) { 
+        pauseFrame = 7; 
+    }
+}
+renderPauseButton(); 
+
+pauseButton.addEventListener("click", () => { 
+    animatePause(); 
+    playSound(); 
+    requestAnimationFrame(renderPauseButton); 
+
+    setTimeout(() => {
+        pauseBg.style.display = "block"; 
+    }, 400)
+}); 
 
 function renderButton (){ 
     restartCtx.clearRect(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT); 
@@ -109,6 +147,10 @@ resumeButton.addEventListener("click", () => {
         resumeSprite = 0; 
     }
     playSound(); 
+
+    setTimeout(() => { 
+        pauseBg.style.display = "none"; 
+    }, 416.75);
 }); 
 
 restartButton.addEventListener("click", () => {
@@ -137,6 +179,11 @@ restartButton.addEventListener("click", () => {
     frameNumber = 8; 
     character.style.left = (checkpoints.start.x - 18) + "px";
     character.style.top = (checkpoints.start.y - 40) + "px";
+
+    setTimeout(() => { 
+        document.getElementById("pause-background").style.display = "none"; 
+    }, 416.75);
+
 });
 
 
