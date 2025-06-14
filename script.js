@@ -54,6 +54,12 @@ let isAnimating = false;
 let resumeSprite = 0; 
 let resumeAnimating = false; 
 const pauseBg = document.getElementById("pause-background"); 
+var time = 0; 
+const label1 = document.getElementById("label1"); 
+const label2 = document.getElementById("label2"); 
+const labels = document.querySelector(".pause-label"); 
+
+
 
 function renderPauseButton () { 
     pauseCtx.clearRect(0, 0, PAUSE_WIDTH, PAUSE_HEIGHT); 
@@ -78,8 +84,11 @@ pauseButton.addEventListener("click", () => {
     animatePause(); 
     playSound(); 
     requestAnimationFrame(renderPauseButton); 
-
+    label1.innerHTML = "Game"; 
+    label2.innerHTML = "Paused"; 
+    labels.style.left = 135 + "px"; 
     setTimeout(() => {
+
         pauseBg.style.display = "block"; 
     }, 400)
 }); 
@@ -154,6 +163,7 @@ resumeButton.addEventListener("click", () => {
 }); 
 
 restartButton.addEventListener("click", () => {
+    time = 0; 
     if(!isAnimating) { 
         isAnimating = true; 
         buttonLoop(); 
@@ -364,7 +374,10 @@ function move(place) {
 
     if(nextCheckpoint === "door") { 
         setTimeout(() => {
-            alert("You win.");
+            labels.style.left = 100 + "px"; 
+            label1.innerHTML = "Level"; 
+            label2.innerHTML = "Complete!"; 
+            pauseBg.style.display = "block"; 
         }, waitTime);   
     }
 
@@ -380,5 +393,25 @@ function getDistance(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
 }
 
-document.getElementById("command").placeholder = "Type Commands... \nmove('up');";
+function startTimer() { 
+    time = 0; 
+
+    const timer = document.querySelector('.timer');
+    setInterval(function () { 
+        var seconds = Math.floor(time % 60, 10); 
+        var minutes = Math.floor(time / 60, 10); 
+
+        seconds = seconds < 10? "0" + seconds: seconds; 
+        minutes = minutes < 10? "0" + minutes: minutes; 
+
+        timer.innerHTML = minutes + ":" + seconds;
+
+        time++; 
+    }, 1000)
+
+    timer.style.height = "auto"; 
+}
+
+startTimer(); 
+document.getElementById("command").placeholder = "Help girlie get to the door by using commands. \nmove('up');\nmove('right')\nmove('down')\nmove('left')";
 placeCheckpoints(); 

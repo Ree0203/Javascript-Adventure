@@ -8,20 +8,35 @@
 
 </head>
 <body>
-
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.php" class="logo">HelloCode</a>
+            <div class="user-section">
+                <?php if ($isLoggedIn): ?>
+                    <span>Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?>!</span>
+                    <a href="dashboard.php" class="user-icon"><i class="ri-user-6-line"></i></a>
+                <?php else: ?>
+                    <a href="login.php" class="user-icon"><i class="ri-user-6-line"></i></a>
+                <?php endif; ?>
+            </div>
+        </div>
+    </nav>
     <div class="main" id="main">
         <div class="pause-background"id = "pause-background">
             <div class="pause-menu" id="pause-menu">
                     <div class="pause-label">
-                        <div>GAME</div>
-                        <div>PAUSED</div>
+                        <div id="label1">Game</div>
+                        <div id="label2">Paused</div>
                     </div>
                 <canvas id="restart-button"></canvas>
                 <canvas id="resume-button"></canvas>
             </div>
         </div>  
+
+        
         <div class = "game">
             <div class="game-board" id="board">
+                <div class="timer"></div>
                 <canvas id="character"></canvas>
                 <canvas id="pause-logo"></canvas>
             </div>
